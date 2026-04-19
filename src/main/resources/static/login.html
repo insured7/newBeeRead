@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceder — BeeRead</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,400&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<!-- Fondo hexagonal -->
+<div class="hex-bg" aria-hidden="true">
+    <div class="hex-grid"></div>
+</div>
+
+<!-- Abejas decorativas -->
+<div class="bee-trail" aria-hidden="true">
+    <span class="bee bee-1">🐝</span>
+    <span class="bee bee-2">🐝</span>
+</div>
+
+<div id="main-header"></div>
+
+<main class="auth-wrapper">
+
+    <!-- Panel izquierdo: branding -->
+    <div class="auth-branding">
+        <a href="index.html" class="logo logo--big">
+            <i class="fas fa-book-reader"></i> BeeRead
+        </a>
+        <h2>La colmena literaria que estabas buscando</h2>
+        <ul class="auth-perks">
+            <li><i class="fas fa-check-circle"></i> Busca entre +5 millones de libros</li>
+            <li><i class="fas fa-check-circle"></i> Lleva tu estantería personal</li>
+            <li><i class="fas fa-check-circle"></i> Puntúa y reseña tus lecturas</li>
+            <li><i class="fas fa-check-circle"></i> 100% gratuito, sin anuncios</li>
+        </ul>
+        <div class="auth-quote">
+            <i class="fas fa-quote-left"></i>
+            <p>Un libro siempre tiene algo nuevo que enseñarte.</p>
+        </div>
+    </div>
+
+    <!-- Panel derecho: formulario -->
+    <div class="auth-panel">
+        <div class="auth-container">
+
+            <div id="messageBox" class="hidden"></div>
+
+            <!-- Login -->
+            <div id="loginSection">
+                <h1 class="auth-title">Bienvenido de nuevo</h1>
+                <p class="auth-subtitle">Inicia sesión para acceder a tu estantería</p>
+
+                <form id="loginForm" class="auth-form" novalidate>
+                    <div class="form-group">
+                        <label class="form-label" for="loginEmail">Email</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-envelope input-icon"></i>
+                            <input type="email" class="form-input" id="loginEmail" placeholder="tu@email.com" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="loginPassword">Contraseña</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock input-icon"></i>
+                            <input type="password" class="form-input" id="loginPassword" placeholder="••••••••" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-submit">
+                        Entrar <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+
+                <div class="auth-switch">
+                    ¿Todavía no tienes cuenta?
+                    <a href="#" id="showRegister">Regístrate gratis</a>
+                </div>
+            </div>
+
+            <!-- Registro -->
+            <div id="registerSection" class="hidden">
+                <h1 class="auth-title">Únete a la colmena</h1>
+                <p class="auth-subtitle">Crea tu cuenta gratis en segundos</p>
+
+                <form id="registerForm" class="auth-form" novalidate>
+                    <div class="form-group">
+                        <label class="form-label" for="registerUsername">Nombre de usuario</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-user input-icon"></i>
+                            <input type="text" class="form-input" id="registerUsername" placeholder="juanito_lector" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="registerEmail">Email</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-envelope input-icon"></i>
+                            <input type="email" class="form-input" id="registerEmail" placeholder="tu@email.com" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="registerPassword">Contraseña</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock input-icon"></i>
+                            <input type="password" class="form-input" id="registerPassword" placeholder="Mínimo 6 caracteres" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-submit">
+                        Crear mi cuenta <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+
+                <div class="auth-switch">
+                    ¿Ya tienes cuenta?
+                    <a href="#" id="showLogin">Inicia sesión</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</main>
+
+<script src="js/app.js"></script>
+<script src="js/header.js"></script>
+</body>
+</html>

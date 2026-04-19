@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeeRead — Tu Colmena Literaria 🐝📚</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,400&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<!-- Fondo hexagonal animado -->
+<div class="hex-bg" aria-hidden="true">
+    <div class="hex-grid"></div>
+</div>
+
+<!-- Abejas decorativas -->
+<div class="bee-trail" aria-hidden="true">
+    <span class="bee bee-1">🐝</span>
+    <span class="bee bee-2">🐝</span>
+    <span class="bee bee-3">🐝</span>
+</div>
+
+<div id="main-header"></div>
+
+<main>
+
+    <!-- ── HERO ──────────────────────────────────────────── -->
+    <section class="hero">
+        <div class="hero-inner">
+            <div class="hero-badge">
+                <i class="fas fa-star"></i> La comunidad literaria que estabas buscando
+            </div>
+            <h1 class="hero-title">
+                Tu <em>Colmena</em><br>de Libros
+            </h1>
+            <p class="hero-sub">
+                Descubre lecturas, lleva tu registro personal y comparte opiniones con otros lectores. Todo en un solo lugar.
+            </p>
+            <div class="hero-cta">
+                <a href="login.html#register" class="btn-primary btn-lg">
+                    <i class="fas fa-user-plus"></i> Únete gratis
+                </a>
+                <a href="#buscar" class="btn-ghost btn-lg">
+                    <i class="fas fa-search"></i> Buscar libros
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-num">+5M</span>
+                    <span class="stat-label">Libros indexados</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-num">100%</span>
+                    <span class="stat-label">Gratuito</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-num">🐝</span>
+                    <span class="stat-label">Hecho con amor</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Libros flotantes decorativos -->
+        <div class="floating-books" aria-hidden="true">
+            <div class="fbook fbook-1">📖</div>
+            <div class="fbook fbook-2">📚</div>
+            <div class="fbook fbook-3">📕</div>
+            <div class="fbook fbook-4">📗</div>
+        </div>
+    </section>
+
+    <!-- ── FEATURES ──────────────────────────────────────── -->
+    <section class="features" id="caracteristicas">
+        <div class="section-inner">
+            <div class="section-label">¿Qué puedes hacer?</div>
+            <h2 class="section-title">Todo lo que un lector necesita</h2>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔍</div>
+                    <h3>Descubre</h3>
+                    <p>Busca entre millones de títulos gracias a la base de datos de Open Library. Desde clásicos hasta novedades.</p>
+                </div>
+                <div class="feature-card feature-card--highlight">
+                    <div class="feature-icon">⭐</div>
+                    <h3>Puntúa</h3>
+                    <p>Dale tu nota a cada libro que leas. Construye tu historial literario y recuerda siempre qué te gustó más.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🗣️</div>
+                    <h3>Comparte</h3>
+                    <p>Conecta con otros lectores, comparte reseñas y descubre qué está leyendo tu comunidad ahora mismo.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── CÓMO FUNCIONA ─────────────────────────────────── -->
+    <section class="how-it-works">
+        <div class="section-inner">
+            <div class="section-label">Tan fácil como leer</div>
+            <h2 class="section-title">Empieza en tres pasos</h2>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-num">01</div>
+                    <div class="step-content">
+                        <h3>Crea tu cuenta</h3>
+                        <p>Regístrate gratis en segundos. Solo necesitas un email y un nombre de usuario.</p>
+                    </div>
+                </div>
+                <div class="step-connector" aria-hidden="true">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+                <div class="step">
+                    <div class="step-num">02</div>
+                    <div class="step-content">
+                        <h3>Busca tus libros</h3>
+                        <p>Usa el buscador para encontrar cualquier libro y añádelo a tu estantería personal.</p>
+                    </div>
+                </div>
+                <div class="step-connector" aria-hidden="true">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+                <div class="step">
+                    <div class="step-num">03</div>
+                    <div class="step-content">
+                        <h3>Puntúa y disfruta</h3>
+                        <p>Valora lo que lees, escribe tus impresiones y forma parte de la colmena.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── BUSCADOR ──────────────────────────────────────── -->
+    <section class="search-section" id="buscar">
+        <div class="section-inner">
+            <div class="section-label">Explorar</div>
+            <h2 class="section-title">Busca tu próxima lectura</h2>
+            <p class="section-sub">Prueba con un título, autor o género. Tenemos millones de libros esperándote.</p>
+
+            <form class="search-box" id="searchForm">
+                <div class="search-input-wrap">
+                    <i class="fas fa-search search-icon"></i>
+                    <input
+                        type="text"
+                        class="search-input"
+                        id="searchInput"
+                        placeholder="Ej: Dune, García Márquez, ciencia ficción…"
+                        required
+                        autocomplete="off"
+                    >
+                </div>
+                <button type="submit" class="btn-primary btn-search">
+                    <i class="fas fa-search"></i> Buscar
+                </button>
+            </form>
+
+            <div id="searchResults" class="books-grid"></div>
+        </div>
+    </section>
+
+    <!-- ── CTA FINAL ─────────────────────────────────────── -->
+    <section class="cta-banner">
+        <div class="cta-inner">
+            <span class="cta-emoji">🐝</span>
+            <h2>¿Listo para unirte a la colmena?</h2>
+            <p>Empieza a construir tu biblioteca personal hoy mismo, es completamente gratis.</p>
+            <a href="login.html#register" class="btn-primary btn-lg">
+                Crear mi cuenta <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </section>
+
+</main>
+
+<footer class="footer">
+    <div class="footer-inner">
+        <a href="index.html" class="logo">
+            <i class="fas fa-book-reader"></i> BeeRead
+        </a>
+        <p>Hecho con 🍯 y muchas ganas de leer</p>
+    </div>
+</footer>
+
+<script src="js/app.js"></script>
+<script src="js/header.js"></script>
+</body>
+</html>
