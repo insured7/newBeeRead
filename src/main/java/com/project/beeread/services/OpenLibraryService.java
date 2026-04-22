@@ -41,7 +41,7 @@ public class OpenLibraryService {
                 }
 
                 book.setFirstPublishYear(node.path("first_publish_year").asInt(0));
-                book.setKey(node.path("key").asText());
+                book.setKey(node.path("key").asText().replace("/works/", ""));
 
                 // Open Library tiene una URL específica para las portadas si tenemos el cover_i
                 if (node.has("cover_i")) {

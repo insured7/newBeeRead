@@ -8,6 +8,53 @@ const loginSection    = document.getElementById('loginSection');
 const registerSection = document.getElementById('registerSection');
 const messageBox      = document.getElementById('messageBox');
 
+
+// Función para cargar los libros destacados en la página principal
+async function loadFeaturedBooks() {
+    const container = document.getElementById('featuredBooksContainer');
+    if (!container) return; // Si no estamos en index.html, no hace nada
+
+    try {
+        const response = await fetch('http://localhost:8080/api/books/featured');
+        if (!response.ok) throw new Error('No se pudieron cargar los destacados');
+
+        const books = await response.json();
+
+        if (books.length === 0) {
+            container.innerHTML = '<p style="color: var(--text-gray);">La colmena aún está vacía. ¡Busca un libro y sé el primero en guardarlo!</p>';
+            return;
+        }
+
+        container.innerHTML = '';
+
+        books.forEach(book => {
+            const card = document.createElement('div');
+            card.className = 'book-card';
+            card.innerHTML = `
+                <img src="${book.coverUrl}" alt="${book.title}" class="book-cover">
+                <div class="book-info">
+                    <div class="book-title" title="${book.title}">${book.title}</div>
+                    <div class="book-author">${book.author}</div>
+                </div>
+            `;
+
+            // Redirige al detalle al hacer clic
+            card.addEventListener('click', () => {
+                window.location.href = `bookDetail.html?id=${encodeURIComponent(book.id)}`;
+            });
+
+            container.appendChild(card);
+        });
+
+    } catch (error) {
+        container.innerHTML = '<p class="error">Aún no hay abejas trabajando en esta sección.</p>';
+        console.error(error);
+    }
+}
+
+// Ejecutar al cargar la página
+document.addEventListener('DOMContentLoaded', loadFeaturedBooks);
+
 // Muestra mensajes de error o éxito en pantalla
 function showMessage(text, isError = false) {
     if (!messageBox) return;
@@ -112,74 +159,12 @@ if (loginForm) {
 // LÓGICA DE LA VISTA PRINCIPAL (BÚSQUEDA)
 // ==========================================
 
+// En app.js, sustituye el listener del searchForm por este:
 const searchForm = document.getElementById('searchForm');
 if (searchForm) {
-    searchForm.addEventListener('submit', async (e) => {
+    searchForm.addEventListener('submit', (e) => {
         e.preventDefault();
-
-        const query            = document.getElementById('searchInput').value.trim();
-        const resultsContainer = document.getElementById('searchResults');
-
-        if (!query) return;
-
-        resultsContainer.innerHTML = '<p>Buscando libros, dame un momento… 🐝</p>';
-
-        try {
-            const response = await fetch(`http://localhost:8080/api/books/search?query=${encodeURIComponent(query)}`);
-            const books    = await response.json();
-
-            resultsContainer.innerHTML = '';
-
-            if (books.length === 0) {
-                resultsContainer.innerHTML = '<p>No hemos encontrado nada con ese nombre. Prueba con otro término.</p>';
-                return;
-            }
-
-            books.forEach(book => {
-                const card = document.createElement('div');
-                card.className = 'book-card';
-
-                card.innerHTML = `
-                    <img
-                        src="${book.coverUrl}"
-                        alt="Portada de ${book.title}"
-                        class="book-cover"
-                        loading="lazy"
-                        onerror="this.style.background='var(--navy-light)'"
-                    >
-                    <div class="book-info">
-                        <div class="book-title" title="${book.title}">${book.title}</div>
-                        <div class="book-author" title="${book.author}">${book.author}</div>
-                        ${book.firstPublishYear
-                            ? `<div class="book-year">${book.firstPublishYear}</div>`
-                            : ''}
-                    </div>
-                `;
-
-                card.addEventListener('click', async () => {
-                    try {
-                        const saveResponse = await fetch('http://localhost:8080/api/books/save', {
-                            method:  'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body:    JSON.stringify(book)
-                        });
-
-                        if (saveResponse.ok) {
-                            alert(`"${book.title}" añadido a la base de datos!`);
-                        } else {
-                            alert('Error al guardar el libro.');
-                        }
-                    } catch (err) {
-                        console.error('Error en la petición:', err);
-                    }
-                });
-
-                resultsContainer.appendChild(card);
-            });
-
-        } catch (error) {
-            resultsContainer.innerHTML = '<p>Algo ha fallado al conectar con el servidor. ¿Está el backend corriendo?</p>';
-            console.error(error);
-        }
+        const query = document.getElementById('searchInput').value;
+        window.location.href = `searchResults.html?q=${encodeURIComponent(query)}`;
     });
 }
