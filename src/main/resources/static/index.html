@@ -18,6 +18,18 @@
     <div class="hex-grid"></div>
 </div>
 
+<!-- Partículas doradas flotantes -->
+<div class="sparkle-particles" aria-hidden="true">
+    <span class="sparkle sparkle-1"></span>
+    <span class="sparkle sparkle-2"></span>
+    <span class="sparkle sparkle-3"></span>
+    <span class="sparkle sparkle-4"></span>
+    <span class="sparkle sparkle-5"></span>
+    <span class="sparkle sparkle-6"></span>
+    <span class="sparkle sparkle-7"></span>
+    <span class="sparkle sparkle-8"></span>
+</div>
+
 <!-- Abejas decorativas -->
 <div class="bee-trail" aria-hidden="true">
     <span class="bee bee-1">🐝</span>
@@ -75,7 +87,32 @@
             <div class="fbook fbook-4">📗</div>
         </div>
     </section>
+    <!-- ── BUSCADOR ──────────────────────────────────────── -->
+    <section class="search-section" id="buscar">
+        <div class="section-inner">
+            <div class="section-label">Explorar</div>
+            <h2 class="section-title">Busca tu próxima lectura</h2>
+            <p class="section-sub">Prueba con un título, autor o género. Tenemos millones de libros esperándote.</p>
 
+            <form class="search-box" id="searchForm">
+                <div class="search-input-wrap">
+                    <i class="fas fa-search search-icon"></i>
+                    <input
+                            type="text"
+                            class="search-input"
+                            id="searchInput"
+                            placeholder="Ej: Dune, García Márquez, ciencia ficción…"
+                            required
+                            autocomplete="off"
+                    >
+                </div>
+                <button type="submit" class="btn-primary btn-search">
+                    <i class="fas fa-search"></i> Buscar
+                </button>
+            </form>
+
+        </div>
+    </section>
     <!-- ── FEATURES ──────────────────────────────────────── -->
     <section class="features" id="caracteristicas">
         <div class="section-inner">
@@ -140,39 +177,13 @@
         </div>
     </section>
 
-    <section class="featured-section" style="max-width: 1200px; margin: 0 auto; padding: 2rem;">
-        <h2 style="color: var(--primary-color); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
-            <i class="fas fa-fire"></i> Recién llegados a la colmena
-        </h2>
-        <div id="featuredBooksContainer" class="books-grid">
-            <p style="color: var(--text-gray);">Cargando libros destacados...</p>
-        </div>
-    </section>
-
-    <!-- ── BUSCADOR ──────────────────────────────────────── -->
-    <section class="search-section" id="buscar">
+    <!-- ── FEATURED ──────────────────────────────────────── -->
+    <section class="featured-section">
         <div class="section-inner">
-            <div class="section-label">Explorar</div>
-            <h2 class="section-title">Busca tu próxima lectura</h2>
-            <p class="section-sub">Prueba con un título, autor o género. Tenemos millones de libros esperándote.</p>
-
-            <form class="search-box" id="searchForm">
-                <div class="search-input-wrap">
-                    <i class="fas fa-search search-icon"></i>
-                    <input
-                            type="text"
-                            class="search-input"
-                            id="searchInput"
-                            placeholder="Ej: Dune, García Márquez, ciencia ficción…"
-                            required
-                            autocomplete="off"
-                    >
-                </div>
-                <button type="submit" class="btn-primary btn-search">
-                    <i class="fas fa-search"></i> Buscar
-                </button>
-            </form>
-
+            <h2><i class="fas fa-fire"></i> Recién llegados a la colmena</h2>
+            <div id="featuredBooksContainer" class="books-grid">
+                <p style="color: var(--text-muted);">Cargando libros destacados...</p>
+            </div>
         </div>
     </section>
 
@@ -187,7 +198,6 @@
             </a>
         </div>
     </section>
-
 
 </main>
 
