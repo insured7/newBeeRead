@@ -3,56 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BeeRead — Tu Colmena Literaria 🐝📚</title>
+    <title>BeeRead — Tu Colmena Literaria 🐝</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,400&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="data:,"> <!-- Favicon error-->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .zumbidos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .zumbido-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--honey-soft);
+        }
+    </style>
 </head>
 <body>
 
-<!-- Fondo hexagonal animado -->
-<div class="hex-bg" aria-hidden="true">
-    <div class="hex-grid"></div>
-</div>
-
-<!-- Partículas doradas flotantes -->
-<div class="sparkle-particles" aria-hidden="true">
-    <span class="sparkle sparkle-1"></span>
-    <span class="sparkle sparkle-2"></span>
-    <span class="sparkle sparkle-3"></span>
-    <span class="sparkle sparkle-4"></span>
-    <span class="sparkle sparkle-5"></span>
-    <span class="sparkle sparkle-6"></span>
-    <span class="sparkle sparkle-7"></span>
-    <span class="sparkle sparkle-8"></span>
-</div>
-
-<!-- Abejas decorativas -->
-<div class="bee-trail" aria-hidden="true">
-    <span class="bee bee-1">🐝</span>
-    <span class="bee bee-2">🐝</span>
-    <span class="bee bee-3">🐝</span>
-</div>
-
+<div class="hex-bg" aria-hidden="true"><div class="hex-grid"></div></div>
 <div id="main-header"></div>
 
 <main>
-
-    <!-- ── HERO ──────────────────────────────────────────── -->
     <section class="hero">
         <div class="hero-inner">
-            <div class="hero-badge">
-                <i class="fas fa-star"></i> La comunidad literaria que estabas buscando
-            </div>
+            <span class="hero-badge">
+                <i class="fas fa-star" style="color: var(--honey);"></i> La comunidad literaria que estabas buscando
+            </span>
+
             <h1 class="hero-title">
                 Tu <em>Colmena</em><br>de Libros
             </h1>
-            <p class="hero-sub">
+
+            <p class="hero-sub" style="margin-bottom: 2.5rem; max-width: 600px;">
                 Descubre lecturas, lleva tu registro personal y comparte opiniones con otros lectores. Todo en un solo lugar.
             </p>
+
             <div class="hero-cta">
                 <a href="login.html#register" class="btn-primary btn-lg">
                     <i class="fas fa-user-plus"></i> Únete gratis
@@ -61,6 +53,7 @@
                     <i class="fas fa-search"></i> Buscar libros
                 </a>
             </div>
+
             <div class="hero-stats">
                 <div class="stat">
                     <span class="stat-num">+5M</span>
@@ -71,142 +64,73 @@
                     <span class="stat-num">100%</span>
                     <span class="stat-label">Gratuito</span>
                 </div>
-                <div class="stat-divider"></div>
-                <div class="stat">
-                    <span class="stat-num">🐝</span>
-                    <span class="stat-label">Hecho con amor</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="activity-section" style="padding: 6rem 0; background: var(--navy-deep);">
+        <div class="section-inner">
+            <div style="margin-bottom: 3rem; text-align: center;">
+                <span style="color: var(--honey); text-transform: uppercase; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.2em;">Comunidad en vivo</span>
+                <h2 style="font-family: 'Fraunces'; font-size: 2.5rem; color: var(--text);">Últimos zumbidos</h2>
+            </div>
+
+            <div id="latestReviewsContainer" class="zumbidos-grid">
+                <p style="color: var(--text-muted); text-align: center; grid-column: 1 / -1;">Escuchando a la colmena...</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="features-section" style="padding: 6rem 0;">
+        <div class="section-inner">
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-compass"></i></div>
+                    <h3>Descubre</h3>
+                    <p>Explora un catálogo inmenso alimentado por Open Library.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-star"></i></div>
+                    <h3>Puntúa</h3>
+                    <p>Dale estrellas a tus libros favoritos y escribe reseñas detalladas.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-share-alt"></i></div>
+                    <h3>Comparte</h3>
+                    <p>Conecta con otros lectores y haz crecer tu colmena.</p>
                 </div>
             </div>
         </div>
-
-        <!-- Libros flotantes decorativos -->
-        <div class="floating-books" aria-hidden="true">
-            <div class="fbook fbook-1">📖</div>
-            <div class="fbook fbook-2">📚</div>
-            <div class="fbook fbook-3">📕</div>
-            <div class="fbook fbook-4">📗</div>
-        </div>
     </section>
-    <!-- ── BUSCADOR ──────────────────────────────────────── -->
-    <section class="search-section" id="buscar">
-        <div class="section-inner">
-            <div class="section-label">Explorar</div>
-            <h2 class="section-title">Busca tu próxima lectura</h2>
-            <p class="section-sub">Prueba con un título, autor o género. Tenemos millones de libros esperándote.</p>
 
-            <form class="search-box" id="searchForm">
-                <div class="search-input-wrap">
-                    <i class="fas fa-search search-icon"></i>
-                    <input
-                            type="text"
-                            class="search-input"
-                            id="searchInput"
-                            placeholder="Ej: Dune, García Márquez, ciencia ficción…"
-                            required
-                            autocomplete="off"
-                    >
+    <section id="buscar" style="padding: 6rem 0; background: var(--navy-deep);">
+        <div class="section-inner" style="max-width: 800px; margin: 0 auto; text-align: center;">
+            <h2 style="font-family: 'Fraunces'; margin-bottom: 2rem; font-size: 2.5rem;">Encuentra tu próximo libro</h2>
+            <form class="search-box" id="searchForm" style="background: var(--navy-card); padding: 0.75rem; border-radius: var(--radius-lg); display: flex; gap: 0.5rem; box-shadow: var(--shadow-card); border: 1px solid rgba(255,255,255,0.05);">
+                <div class="search-input-wrap" style="flex: 1; display: flex; align-items: center; padding-left: 1.5rem;">
+                    <i class="fas fa-search search-icon" style="color: var(--honey); margin-right: 1rem;"></i>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Ej: Dune, García Márquez, ciencia ficción…" required autocomplete="off" style="width: 100%; background: transparent; border: none; color: var(--text); font-size: 1.1rem; outline: none;">
                 </div>
-                <button type="submit" class="btn-primary btn-search">
+                <button type="submit" class="btn-primary btn-search" style="padding: 1rem 2.5rem; font-size: 1.1rem; border-radius: var(--radius-md);">
                     <i class="fas fa-search"></i> Buscar
                 </button>
             </form>
-
-        </div>
-    </section>
-    <!-- ── FEATURES ──────────────────────────────────────── -->
-    <section class="features" id="caracteristicas">
-        <div class="section-inner">
-            <div class="section-label">¿Qué puedes hacer?</div>
-            <h2 class="section-title">Todo lo que un lector necesita</h2>
-
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">🔍</div>
-                    <h3>Descubre</h3>
-                    <p>Busca entre millones de títulos gracias a la base de datos de Open Library. Desde clásicos hasta novedades.</p>
-                </div>
-                <div class="feature-card feature-card--highlight">
-                    <div class="feature-icon">⭐</div>
-                    <h3>Puntúa</h3>
-                    <p>Dale tu nota a cada libro que leas. Construye tu historial literario y recuerda siempre qué te gustó más.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🗣️</div>
-                    <h3>Comparte</h3>
-                    <p>Conecta con otros lectores, comparte reseñas y descubre qué está leyendo tu comunidad ahora mismo.</p>
-                </div>
-            </div>
         </div>
     </section>
 
-    <!-- ── CÓMO FUNCIONA ─────────────────────────────────── -->
-    <section class="how-it-works">
-        <div class="section-inner">
-            <div class="section-label">Tan fácil como leer</div>
-            <h2 class="section-title">Empieza en tres pasos</h2>
-
-            <div class="steps">
-                <div class="step">
-                    <div class="step-num">01</div>
-                    <div class="step-content">
-                        <h3>Crea tu cuenta</h3>
-                        <p>Regístrate gratis en segundos. Solo necesitas un email y un nombre de usuario.</p>
-                    </div>
-                </div>
-                <div class="step-connector" aria-hidden="true">
-                    <i class="fas fa-arrow-right"></i>
-                </div>
-                <div class="step">
-                    <div class="step-num">02</div>
-                    <div class="step-content">
-                        <h3>Busca tus libros</h3>
-                        <p>Usa el buscador para encontrar cualquier libro y añádelo a tu estantería personal.</p>
-                    </div>
-                </div>
-                <div class="step-connector" aria-hidden="true">
-                    <i class="fas fa-arrow-right"></i>
-                </div>
-                <div class="step">
-                    <div class="step-num">03</div>
-                    <div class="step-content">
-                        <h3>Puntúa y disfruta</h3>
-                        <p>Valora lo que lees, escribe tus impresiones y forma parte de la colmena.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ── FEATURED ──────────────────────────────────────── -->
-    <section class="featured-section">
-        <div class="section-inner">
-            <h2><i class="fas fa-fire"></i> Recién llegados a la colmena</h2>
-            <div id="featuredBooksContainer" class="books-grid">
-                <p style="color: var(--text-muted);">Cargando libros destacados...</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- ── CTA FINAL ─────────────────────────────────────── -->
     <section class="cta-banner">
         <div class="cta-inner">
             <span class="cta-emoji">🐝</span>
             <h2>¿Listo para unirte a la colmena?</h2>
             <p>Empieza a construir tu biblioteca personal hoy mismo, es completamente gratis.</p>
-            <a href="login.html#register" class="btn-primary btn-lg">
-                Crear mi cuenta <i class="fas fa-arrow-right"></i>
-            </a>
+            <a href="login.html#register" class="btn-primary btn-lg">Crear mi cuenta <i class="fas fa-arrow-right"></i></a>
         </div>
     </section>
-
 </main>
 
 <footer class="footer">
     <div class="footer-inner">
-        <a href="index.html" class="logo">
-            <i class="fas fa-book-reader"></i> BeeRead
-        </a>
-        <p>Hecho con 🍯 y muchas ganas de leer</p>
+        <p>BeeRead © 2026 · Hecho con 🍯 </p>
     </div>
 </footer>
 

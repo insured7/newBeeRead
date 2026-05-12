@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,400&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="data:,"> <!-- Favicon error-->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -29,7 +30,6 @@
 <main class="results-page">
     <div class="results-inner">
 
-        <!-- Cabecera de resultados -->
         <div class="results-header">
             <nav class="breadcrumb" aria-label="Navegación">
                 <a href="index.html"><i class="fas fa-home"></i> Inicio</a>
@@ -43,7 +43,6 @@
             </h1>
             <p class="results-count hidden" id="resultsCount"></p>
 
-            <!-- Buscador inline para refinar sin volver al inicio -->
             <form class="search-box search-box--compact" id="refineForm">
                 <div class="search-input-wrap">
                     <i class="fas fa-search search-icon"></i>
@@ -62,9 +61,19 @@
             </form>
         </div>
 
-        <!-- Grid de resultados -->
+        <div class="search-tabs-container">
+            <button id="tabBooks" class="search-tab active">
+                <i class="fas fa-book"></i> Libros <span class="tab-badge" id="countBooks">0</span>
+            </button>
+            <button id="tabUsers" class="search-tab">
+                <i class="fas fa-users"></i> Usuarios <span class="tab-badge" id="countUsers">0</span>
+            </button>
+        </div>
+
         <div id="searchResults" class="books-grid">
-            <!-- Los skeleton cards se inyectan desde JS -->
+        </div>
+
+        <div id="userResults" class="users-grid hidden">
         </div>
 
     </div>

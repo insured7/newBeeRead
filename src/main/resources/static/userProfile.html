@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil Público — BeeRead</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,400&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="data:,"> <!-- Favicon error-->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div class="hex-bg" aria-hidden="true"><div class="hex-grid"></div></div>
+<div id="main-header"></div>
+
+<main class="results-page" style="padding-top: 8rem;">
+    <div class="results-inner">
+        <div id="profileLoading">
+            <div class="feature-card skeleton" style="height: 200px; margin-bottom: 3rem;"></div>
+        </div>
+
+        <div id="profileContent" class="hidden">
+            <section class="feature-card" style="display: flex; gap: 2.5rem; align-items: flex-start; margin-bottom: 4rem; flex-wrap: wrap;">
+                <img id="publicAvatar" src="" alt="Avatar" style="width: 140px; height: 140px; border-radius: 50%; border: 3px solid var(--honey); object-fit: cover; box-shadow: var(--shadow-glow);">
+
+                <div style="flex: 1;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+                        <div>
+                            <div class="section-label" id="publicUsernameLabel">@usuario</div>
+                            <h1 class="results-title" id="publicFullName" style="margin-bottom: 0.5rem; font-size: 2.2rem;"></h1>
+                        </div>
+                        <div id="followBtnContainer"></div>
+                    </div>
+
+                    <p id="publicBio" style="color: var(--text-muted); font-size: 1rem; max-width: 600px; line-height: 1.6; margin-top: 1rem;"></p>
+
+                    <div class="profile-stats" style="display: flex; gap: 2rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.08);">
+                        <div class="stat-item">
+                            <span id="followersCount" style="font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 700; color: var(--text);">0</span>
+                            <span style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-left: 0.4rem;">Seguidores</span>
+                        </div>
+                        <div class="stat-item">
+                            <span id="followingCount" style="font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 700; color: var(--text);">0</span>
+                            <span style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-left: 0.4rem;">Siguiendo</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div style="margin-bottom: 4rem;">
+                <h2 class="review-section-title" style="margin-bottom: 1.5rem; font-size: 1.5rem;"><i class="fas fa-heart"></i> Libros Favoritos</h2>
+                <div id="favoritesGrid" class="books-grid"></div>
+            </div>
+
+            <div>
+                <h2 class="review-section-title" style="margin-bottom: 1.5rem; font-size: 1.5rem;"><i class="fas fa-star"></i> Reseñas</h2>
+                <div id="reviewsList" style="display: flex; flex-direction: column; gap: 1.5rem;"></div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="js/app.js"></script>
+<script src="js/header.js"></script>
+<script src="js/userProfile.js"></script>
+</body>
+</html>

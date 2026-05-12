@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,400&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="data:,"> <!-- Favicon error-->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -44,7 +45,20 @@
         </div>
     </div>
 </main>
+<div id="deleteReviewModal" class="modal hidden">
+    <div class="modal-content feature-card" style="max-width: 450px; text-align: center; margin: 10% auto;">
+        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: var(--error); margin-bottom: 1rem;"></i>
+        <h2 style="color: var(--text); margin-bottom: 1rem; font-family: 'Fraunces', serif;">Acción Irreversible</h2>
+        <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 0.95rem;">¿Estás seguro de que quieres eliminar <strong>esta reseña</strong> de la colmena?</p>
 
+        <div style="display: flex; gap: 1rem;">
+            <button class="btn-secondary" onclick="closeAdminDeleteReview()" style="flex: 1; border-color: var(--text-muted); color: var(--text-muted);">Cancelar</button>
+            <button id="confirmDeleteReviewBtn" class="btn-primary" style="flex: 1; background: var(--error); border: none;">
+                <i class="fas fa-trash"></i> Ejecutar
+            </button>
+        </div>
+    </div>
+</div>
 <script src="js/app.js"></script>
 <script src="js/header.js"></script>
 <script src="js/bookDetail.js"></script>
