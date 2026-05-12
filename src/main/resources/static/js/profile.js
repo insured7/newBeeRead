@@ -15,11 +15,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    const username = session.user.user_metadata?.username;
+    let username = session.user.user_metadata?.username; // Intentamos lo rápido
 
     if (!username) {
-        renderError("No se pudo obtener el nombre de usuario.");
-        return;
+        // Si falla, le preguntamos a la base de datos usando el ID seguro de la sesión
+        const { data: profile } = await supabaseClient
+            .from('profiles')
+            .select('username')
+            .eq('id', session.user.id)
+            .single();
+
+        if (profile && profile.username) {
+            username = profile.username;
+        }
+    }
+
+    // Y aquí ya iría tu comprobación de error que muestra la pantalla negra
+    if (!username) {
+        // Mostrar pantalla de error "No se pudo obtener..."
     }
 
     // 2. Obtener datos del backend
