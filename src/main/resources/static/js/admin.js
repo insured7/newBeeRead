@@ -46,7 +46,7 @@ function setupAdminTabs() {
 async function loadAllUsers() {
     const tbody = document.getElementById('usersListBody');
     try {
-        const response = await fetch('http://localhost:8080/api/profiles/all'); // Nuevo endpoint
+        const response = await fetch('/api/profiles/all'); // Nuevo endpoint
         if (!response.ok) throw new Error('Error al cargar usuarios');
         const users = await response.json();
 
@@ -73,7 +73,7 @@ async function loadAllUsers() {
 async function loadAllReviews() {
     const container = document.getElementById('globalReviewsList');
     try {
-        const response = await fetch('http://localhost:8080/api/reviews/latest?limit=50'); // Reutilizamos este o creamos uno "all"
+        const response = await fetch('/api/reviews/latest?limit=50'); // Reutilizamos este o creamos uno "all"
         const reviews = await response.json();
 
         container.innerHTML = reviews.map(r => `
@@ -140,8 +140,8 @@ finalDeleteBtn.addEventListener('click', async () => {
 
     try {
         const url = deleteTarget === 'user'
-            ? `http://localhost:8080/api/profiles/${deleteId}`
-            : `http://localhost:8080/api/reviews/${deleteId}`;
+            ? `/api/profiles/${deleteId}`
+            : `/api/reviews/${deleteId}`;
 
         const response = await fetch(url, { method: 'DELETE' });
 

@@ -65,7 +65,7 @@ async function fetchBooks(query) {
     renderSkeletons(container, 10);
 
     try {
-        const response = await fetch(`http://localhost:8080/api/books/search?query=${encodeURIComponent(query)}`);
+        const response = await fetch(`/api/books/search?query=${encodeURIComponent(query)}`);
         if (!response.ok) throw new Error('Error del servidor');
 
         const books = await response.json();
@@ -109,7 +109,7 @@ async function fetchUsers(query) {
 
     try {
         // Asume que tienes este endpoint en el backend
-        const response = await fetch(`http://localhost:8080/api/profiles/search?query=${encodeURIComponent(query)}`);
+        const response = await fetch(`/api/profiles/search?query=${encodeURIComponent(query)}`);
         if (!response.ok) throw new Error('Error del servidor');
 
         const users = await response.json();
@@ -190,7 +190,7 @@ async function saveAndNavigate(book, card) {
     card.style.pointerEvents = 'none';
 
     try {
-        const response = await fetch('http://localhost:8080/api/books/save', {
+        const response = await fetch('/api/books/save', {
             method:  'POST',
             headers: { 'Content-Type': 'application/json' },
             body:    JSON.stringify(book)

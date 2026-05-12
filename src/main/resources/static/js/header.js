@@ -16,7 +16,7 @@ async function loadHeader() {
 
         // 🐝 NUEVO: Consultamos a la base de datos si eres ADMIN
         try {
-            const res = await fetch(`http://localhost:8080/api/profiles/${username}`);
+            const res = await fetch(`/api/profiles/${username}`);
             if (res.ok) {
                 const profile = await res.json();
                 if (profile.roleId === 2) { // ERES ADMIN

@@ -8,7 +8,7 @@ async function loadBookDetails() {
     if (!bookId) { renderError(container, 'No se ha especificado ningún libro.'); return; }
 
     try {
-        const response = await fetch(`http://localhost:8080/api/books/${encodeURIComponent(bookId)}`);
+        const response = await fetch(`/api/books/${encodeURIComponent(bookId)}`);
         if (!response.ok) throw new Error('Este libro no está en la colmena todavía.');
 
         const book = await response.json();
@@ -189,7 +189,7 @@ async function loadCommunityReviews(bookId) {
     let currentUserRole = 1;
     if (session) {
         try {
-            const res = await fetch(`http://localhost:8080/api/profiles/${session.user.user_metadata.username}`);
+            const res = await fetch(`/api/profiles/${session.user.user_metadata.username}`);
             if(res.ok) {
                 const myProfile = await res.json();
                 currentUserRole = myProfile.roleId;
@@ -198,7 +198,7 @@ async function loadCommunityReviews(bookId) {
     }
 
     try {
-        const response = await fetch(`http://localhost:8080/api/reviews/book/${encodeURIComponent(bookId)}`);
+        const response = await fetch(`/api/reviews/book/${encodeURIComponent(bookId)}`);
         if (!response.ok) throw new Error('No se pudieron cargar las reseñas.');
 
         const reviews = await response.json();
@@ -283,7 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
             confirmDeleteBtn.disabled = true;
 
             try {
-                const response = await fetch(`http://localhost:8080/api/reviews/${reviewIdToDelete}`, {
+                const response = await fetch(`/api/reviews/${reviewIdToDelete}`, {
                     method: 'DELETE'
                 });
 
@@ -339,7 +339,7 @@ function setupReviewInteractions(bookId) {
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (!session) { window.location.href = 'login.html'; return; }
             const username = session.user.user_metadata?.username;
-            const response = await fetch('http://localhost:8080/api/reviews', {
+            const response = await fetch('/api/reviews', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username: username, bookId: bookId, rating: selectedRating, content: text })
@@ -394,7 +394,7 @@ async function setupFavoriteLogic(bookId) {
     if (!session) { favoriteBtn.addEventListener('click', () => window.location.href = 'login.html'); return; }
     const username = session.user.user_metadata?.username;
     try {
-        const checkRes = await fetch(`http://localhost:8080/api/favorites/check?username=${username}&bookId=${bookId}`);
+        const checkRes = await fetch(`/api/favorites/check?username=${username}&bookId=${bookId}`);
         const isFav = await checkRes.json();
         updateFavoriteUI(favoriteBtn, isFav);
     } catch (e) { console.error("Error", e); }
@@ -402,7 +402,7 @@ async function setupFavoriteLogic(bookId) {
     favoriteBtn.addEventListener('click', async () => {
         favoriteBtn.disabled = true;
         try {
-            const response = await fetch('http://localhost:8080/api/favorites/toggle', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, bookId }) });
+            const response = await fetch('/api/favorites/toggle', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, bookId }) });
             const data = await response.json();
             updateFavoriteUI(favoriteBtn, data.isFavorite);
             showReviewMsg(null, data.isFavorite ? 'Añadido a tus favoritos 🍯' : 'Eliminado de favoritos', false);

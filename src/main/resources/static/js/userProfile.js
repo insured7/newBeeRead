@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 3. Obtener los datos del backend usando DTO (pasando mi usuario para calcular isFollowing)
     try {
-        let apiUrl = `http://localhost:8080/api/profiles/${encodeURIComponent(targetUsername)}`;
+        let apiUrl = `/api/profiles/${encodeURIComponent(targetUsername)}`;
         if (myViewerUsername) {
             apiUrl += `?viewerUsername=${encodeURIComponent(myViewerUsername)}`;
         }
@@ -115,7 +115,7 @@ async function toggleFollowAction(btnElement) {
     btnElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i>...';
 
     try {
-        const response = await fetch(`http://localhost:8080/api/profiles/${encodeURIComponent(targetUsername)}/follow?followerUsername=${encodeURIComponent(myViewerUsername)}`, {
+        const response = await fetch(`/api/profiles/${encodeURIComponent(targetUsername)}/follow?followerUsername=${encodeURIComponent(myViewerUsername)}`, {
             method: 'POST'
         });
 

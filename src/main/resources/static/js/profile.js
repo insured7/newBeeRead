@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 2. Obtener datos del backend
     try {
-        const response = await fetch(`http://localhost:8080/api/profiles/${encodeURIComponent(username)}`);
+        const response = await fetch(`/api/profiles/${encodeURIComponent(username)}`);
 
         if (!response.ok) {
             if (response.status === 404) throw new Error('Perfil no encontrado.');
@@ -183,7 +183,7 @@ document.getElementById('editProfileForm').addEventListener('submit', async (e) 
             bio: document.getElementById('editBio').value.trim()
         };
 
-        const response = await fetch(`http://localhost:8080/api/profiles/${currentProfileId}`, {
+        const response = await fetch(`/api/profiles/${currentProfileId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updatedData)

@@ -15,7 +15,7 @@ async function loadFeaturedBooks() {
     if (!container) return; // Si no estamos en index.html, no hace nada
 
     try {
-        const response = await fetch('http://localhost:8080/api/books/featured');
+        const response = await fetch('/api/books/featured');
         if (!response.ok) throw new Error('No se pudieron cargar los destacados');
 
         const books = await response.json();
@@ -187,7 +187,7 @@ async function loadLatestActivity() {
     if (!container) return;
 
     try {
-        const response = await fetch('http://localhost:8080/api/reviews/latest?limit=6');
+        const response = await fetch('/api/reviews/latest?limit=6');
         if (!response.ok) throw new Error('Error al cargar actividad');
 
         const reviews = await response.json();
