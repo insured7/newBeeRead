@@ -10,37 +10,44 @@ async function loadHeader() {
     let userControlsHtml = '';
 
     if (session) {
-        const username = session.user.user_metadata?.username || 'Lector';
-        let adminBadge = '';
-        let adminLink = '';
+            let username = 'Lector'; // Valor por defecto
+            let adminBadge = '';
+            let adminLink = '';
 
-        // 🐝 NUEVO: Consultamos a la base de datos si eres ADMIN
-        try {
-            const res = await fetch(`/api/profiles/${username}`);
-            if (res.ok) {
-                const profile = await res.json();
-                if (profile.roleId === 2) { // ERES ADMIN
+            // 🐝 NUEVO: Consultamos directamente a la tabla profiles usando el ID seguro
+            const { data: profile } = await supabaseClient
+                .from('profiles')
+                .select('username, role_id')
+                .eq('id', session.user.id)
+                .single();
+
+            if (profile) {
+                username = profile.username; // Cogemos el nombre real de la BD
+
+                // Guardamos el rol globalmente para que bookDetail.js pueda leerlo
+                localStorage.setItem('userRole', profile.role_id);
+
+                if (profile.role_id === 2) { // ERES ADMIN
                     adminBadge = `<span class="admin-badge"><i class="fas fa-crown"></i> ADMIN</span>`;
                     adminLink = `
-                        <a href="admin.html" class="nav-user" style="text-decoration: none; color: var(--honey); font-weight: bold; margin-right: 1rem; border: 1px solid var(--honey); padding: 0.3rem 0.8rem; border-radius: 20px;">
+                        <a href="admin.html" id="adminLink" class="nav-user" style="text-decoration: none; color: var(--honey); font-weight: bold; margin-right: 1rem; border: 1px solid var(--honey); padding: 0.3rem 0.8rem; border-radius: 20px;">
                             <i class="fas fa-tools"></i> Panel Admin
                         </a>`;
                 }
             }
-        } catch (e) { console.error("No se pudo cargar el rol del usuario", e); }
 
-        userControlsHtml = `
-            ${adminLink}
-            <a href="profile.html" class="nav-user" style="text-decoration: none; cursor: pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1" title="Ir a mi perfil">
-                <i class="fas fa-user-circle"></i>
-                <span class="nav-username">${username}</span> ${adminBadge}
-            </a>
-            <button id="logoutBtn" class="btn-secondary" style="margin-left: 1rem;">
-                <i class="fas fa-sign-out-alt"></i>
-                <span class="btn-label">Salir</span>
-            </button>
-        `;
-    } else {
+            userControlsHtml = `
+                ${adminLink}
+                <a href="profile.html" class="nav-user" style="text-decoration: none; cursor: pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1" title="Ir a mi perfil">
+                    <i class="fas fa-user-circle"></i>
+                    <span class="nav-username">${username}</span> ${adminBadge}
+                </a>
+                <button id="logoutBtn" class="btn-secondary" style="margin-left: 1rem;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="btn-label">Salir</span>
+                </button>
+            `;
+        } else {
         userControlsHtml = `
             <button id="loginBtn" class="btn-secondary">Iniciar sesión</button>
             <button id="registerBtn" class="btn-primary">

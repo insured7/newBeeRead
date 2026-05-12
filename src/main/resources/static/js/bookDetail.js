@@ -184,17 +184,25 @@ async function loadCommunityReviews(bookId) {
     const container = document.getElementById('communityReviewsList');
     if (!container) return;
 
-    // 1. Obtenemos rol del usuario para el botón de admin
+    // 1. Obtenemos rol del usuario de forma SEGURA usando el ID real
     const { data: { session } } = await supabaseClient.auth.getSession();
-    let currentUserRole = 1;
+    let currentUserRole = 1; // Por defecto es usuario normal
+
     if (session) {
         try {
-            const res = await fetch(`/api/profiles/${session.user.user_metadata.username}`);
-            if(res.ok) {
-                const myProfile = await res.json();
-                currentUserRole = myProfile.roleId;
+            // Le preguntamos a la base de datos qué nivel de rol tiene este ID
+            const { data: profile } = await supabaseClient
+                .from('profiles')
+                .select('role_id')
+                .eq('id', session.user.id)
+                .single();
+
+            if (profile) {
+                currentUserRole = profile.role_id; // Si eres 2, te coronamos como Admin
             }
-        } catch(e){}
+        } catch(e){
+            console.error("Error al obtener el rol para los botones de Admin", e);
+        }
     }
 
     try {
@@ -252,7 +260,6 @@ async function loadCommunityReviews(bookId) {
     }
 }
 
-// ─── FUNCIÓN GLOBAL DE BORRADO PARA EL ADMIN (CUMPLE REQUISITO TFG) ─────────
 // ─── LÓGICA DE MODAL DE BORRADO DE ADMIN ────────────────────────────────────
 
 let reviewIdToDelete = null; // Guardará el ID de la reseña temporalmente
@@ -309,6 +316,7 @@ function resetDeleteButton(btn) {
     btn.innerHTML = '<i class="fas fa-trash"></i> Ejecutar';
     btn.disabled = false;
 }
+
 function setupReviewInteractions(bookId) {
     let selectedRating = 0;
     const stars = document.querySelectorAll('.star-btn');
@@ -416,5 +424,3 @@ function updateFavoriteUI(btn, isFav) {
     if (isFav) { btn.classList.add('active'); icon.className = 'fas fa-heart'; btn.style.color = 'var(--honey)'; }
     else { btn.classList.remove('active'); icon.className = 'far fa-heart'; btn.style.color = 'var(--text-muted)'; }
 }
-
-document.addEventListener('DOMContentLoaded', loadBookDetails);

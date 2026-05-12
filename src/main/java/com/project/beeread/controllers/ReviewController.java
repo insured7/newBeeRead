@@ -86,10 +86,8 @@ public class ReviewController {
         return ResponseEntity.ok(reviewDTOs);
     }
 
-    // Obtener las últimas X reseñas de toda la plataforma para la landing
     @GetMapping("/latest")
     public ResponseEntity<List<ReviewDTO>> getLatestReviews(@RequestParam(defaultValue = "6") int limit) {
-        // Usamos un PageRequest para limitar los resultados
         List<Review> reviews = reviewRepository.findAll(
                 org.springframework.data.domain.PageRequest.of(0, limit,
                         org.springframework.data.domain.Sort.by("createdAt").descending())
@@ -97,13 +95,16 @@ public class ReviewController {
 
         List<ReviewDTO> dtos = reviews.stream().map(review -> {
             ReviewDTO dto = new ReviewDTO();
+
+            dto.setId(review.getId());
+
             dto.setUsername(review.getProfile().getUsername());
             dto.setAvatarUrl(review.getProfile().getAvatarUrl());
             dto.setRating(review.getRating());
             dto.setContent(review.getContent());
             dto.setCreatedAt(review.getCreatedAt());
 
-            // NUEVO: Extraemos los datos del libro
+            // Datos del libro
             dto.setBookId(review.getBook().getId());
             dto.setBookTitle(review.getBook().getTitle());
             dto.setBookCoverUrl(review.getBook().getCoverUrl());
