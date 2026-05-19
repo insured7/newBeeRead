@@ -8,11 +8,10 @@ const loginSection    = document.getElementById('loginSection');
 const registerSection = document.getElementById('registerSection');
 const messageBox      = document.getElementById('messageBox');
 
-
 // Función para cargar los libros destacados en la página principal
 async function loadFeaturedBooks() {
     const container = document.getElementById('featuredBooksContainer');
-    if (!container) return; // Si no estamos en index.html, no hace nada
+    if (!container) return;
 
     try {
         const response = await fetch('/api/books/featured');
@@ -38,7 +37,6 @@ async function loadFeaturedBooks() {
                 </div>
             `;
 
-            // Redirige al detalle al hacer clic
             card.addEventListener('click', () => {
                 window.location.href = `bookDetail.html?id=${encodeURIComponent(book.id)}`;
             });
@@ -52,10 +50,8 @@ async function loadFeaturedBooks() {
     }
 }
 
-// Ejecutar al cargar la página
 document.addEventListener('DOMContentLoaded', loadFeaturedBooks);
 
-// Muestra mensajes de error o éxito en pantalla
 function showMessage(text, isError = false) {
     if (!messageBox) return;
     messageBox.textContent = text;
@@ -95,6 +91,9 @@ if (showRegisterBtn && showLoginBtn && loginSection && registerSection) {
     }
 }
 
+// ==========================================
+// REGISTRO CON CONFIRMACIÓN DE EMAIL
+// ==========================================
 const registerForm = document.getElementById('registerForm');
 if (registerForm) {
     registerForm.addEventListener('submit', async (e) => {
@@ -106,23 +105,40 @@ if (registerForm) {
 
         const btn = registerForm.querySelector('.btn-submit');
         btn.disabled = true;
-        btn.textContent = 'Creando cuenta…';
+        btn.textContent = 'Enviando…';
 
         try {
             const { data, error } = await supabaseClient.auth.signUp({
                 email,
                 password,
-                options: { data: { username, full_name: '', avatar_url: '' } }
+                options: {
+                    data: { username, full_name: '', avatar_url: '' }
+                }
             });
 
             if (error) throw error;
 
-            showMessage('¡Registro exitoso! Ya puedes iniciar sesión.');
+            // Éxito: mostrar mensaje de confirmación
+            showMessage(
+                '✅ Te hemos enviado un correo de confirmación. Revisa tu bandeja de entrada (y la carpeta de spam). Podrás iniciar sesión después de confirmar tu cuenta.',
+                false
+            );
+
+            // Limpiar formulario y cambiar a la vista de login (opcional)
+            registerForm.reset();
             registerSection.classList.add('hidden');
             loginSection.classList.remove('hidden');
-            registerForm.reset();
+
         } catch (error) {
-            showMessage('Error al registrar: ' + error.message, true);
+            let mensajeError = 'Error al registrar: ';
+            if (error.message.includes('User already registered')) {
+                mensajeError += 'Este correo ya está registrado. ¿Quieres iniciar sesión?';
+            } else if (error.message.includes('Password should be at least 6 characters')) {
+                mensajeError += 'La contraseña debe tener al menos 6 caracteres.';
+            } else {
+                mensajeError += error.message;
+            }
+            showMessage(mensajeError, true);
         } finally {
             btn.disabled = false;
             btn.innerHTML = 'Crear mi cuenta <i class="fas fa-arrow-right"></i>';
@@ -130,6 +146,9 @@ if (registerForm) {
     });
 }
 
+// ==========================================
+// LOGIN CON MANEJO DE EMAIL NO CONFIRMADO
+// ==========================================
 const loginForm = document.getElementById('loginForm');
 if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
@@ -143,29 +162,83 @@ if (loginForm) {
         btn.textContent = 'Entrando…';
 
         try {
-                    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-                    if (error) throw error;
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            if (error) throw error;
 
-                    // Verificamos si es administrador buscando su role_id en la tabla profiles
-                    const { data: profileData, error: profileError } = await supabaseClient
-                        .from('profiles')
-                        .select('role_id')
-                        .eq('id', data.user.id)
-                        .single();
+            // Verificar si el email está confirmado (por si acaso, aunque Supabase ya lo impide)
+            if (!data.user.email_confirmed_at) {
+                showMessage('Tu correo aún no ha sido confirmado. Revisa tu bandeja y haz clic en el enlace de confirmación.', true);
+                btn.disabled = false;
+                btn.innerHTML = 'Entrar <i class="fas fa-arrow-right"></i>';
+                return;
+            }
 
-                    if (profileData && profileData.role_id === 2) {
-                        window.location.href = 'admin.html'; // Es admin
-                    } else {
-                        window.location.href = 'profile.html'; // Es usuario normal
-                    }
-                } catch (error) {
-                    showMessage('Correo o contraseña incorrectos', true);
-                    btn.disabled = false;
-                    btn.innerHTML = 'Entrar <i class="fas fa-arrow-right"></i>';
-                }
+            // Obtener role_id desde profiles
+            const { data: profileData, error: profileError } = await supabaseClient
+                .from('profiles')
+                .select('role_id')
+                .eq('id', data.user.id)
+                .single();
+
+            if (profileData && profileData.role_id === 2) {
+                window.location.href = 'admin.html';
+            } else {
+                window.location.href = 'profile.html';
+            }
+        } catch (error) {
+            let mensaje = 'Correo o contraseña incorrectos';
+            if (error.message.includes('Email not confirmed')) {
+                mensaje = 'Tu correo aún no ha sido confirmado. Revisa tu bandeja y haz clic en el enlace de confirmación.';
+            }
+            showMessage(mensaje, true);
+            btn.disabled = false;
+            btn.innerHTML = 'Entrar <i class="fas fa-arrow-right"></i>';
+        }
     });
 }
 
+// ==========================================
+// RECUPERACIÓN DE CONTRASEÑA (SEGURA)
+// ==========================================
+async function solicitarRecuperacion(emailDelUsuario) {
+    // Mostramos un mensaje neutro que no revela si el email existe o no
+    showMessage("Si el correo electrónico está registrado, recibirás instrucciones para restablecer tu contraseña. Revisa tu bandeja de entrada (y la carpeta de spam).");
+
+    // Llamamos a Supabase, pero ignoramos el resultado para no dar pistas
+    const { error } = await supabaseClient.auth.resetPasswordForEmail(emailDelUsuario, {
+        redirectTo: window.location.origin + '/update-password.html',
+    });
+
+    // Solo registramos el error en consola para depuración (no se muestra al usuario)
+    if (error) {
+        console.error("Error al enviar correo de recuperación:", error.message);
+    }
+}
+
+// Capturar el enlace "¿Olvidaste tu contraseña?"
+const forgotLink = document.getElementById('forgotPasswordLink');
+if (forgotLink) {
+    forgotLink.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const emailInput = document.getElementById('loginEmail');
+        const email = emailInput ? emailInput.value.trim() : '';
+
+        // Validación básica de campo vacío
+        if (!email) {
+            showMessage('Introduce tu correo electrónico.', true);
+            return;
+        }
+
+        // Validación de formato de email (opcional pero ayuda al usuario)
+        const emailRegex = /^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/;
+        if (!emailRegex.test(email)) {
+            showMessage('El formato del correo no es válido.', true);
+            return;
+        }
+
+        await solicitarRecuperacion(email);
+    });
+}
 
 // ==========================================
 // LÓGICA DE LA VISTA PRINCIPAL (BÚSQUEDA)
@@ -180,7 +253,6 @@ if (searchForm) {
     });
 }
 
-// Cargar actividad reciente en la landing
 // Cargar actividad reciente en la landing
 async function loadLatestActivity() {
     const container = document.getElementById('latestReviewsContainer');
@@ -208,7 +280,6 @@ async function loadLatestActivity() {
             card.style.cursor = 'pointer';
             card.style.textAlign = 'left';
 
-            // Al hacer clic, te lleva al detalle de ese libro
             card.onclick = () => window.location.href = `bookDetail.html?id=${encodeURIComponent(review.bookId)}`;
 
             card.innerHTML = `
@@ -234,7 +305,6 @@ async function loadLatestActivity() {
     }
 }
 
-// Inicializar si estamos en la landing
 if (document.getElementById('latestReviewsContainer')) {
     loadLatestActivity();
 }

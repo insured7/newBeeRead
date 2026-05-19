@@ -15,6 +15,7 @@ public class ProfileDTO {
     private String avatarUrl;
     private String movil;
     private Integer roleId;
+    private Boolean showMovil = false;
 
     // Campos calculados para la red social
     private int followersCount;

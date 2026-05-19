@@ -1,10 +1,9 @@
 // js/admin.js
 
-let deleteTarget = null; // Guarda qué estamos borrando ('user' o 'review')
-let deleteId = null;     // Guarda el ID del elemento a borrar
+let deleteTarget = null;
+let deleteId = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // 1. Verificación estricta de seguridad
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (!session) { window.location.href = 'login.html'; return; }
 
@@ -15,11 +14,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    // 2. Configurar pestañas
     setupAdminTabs();
-
-    // 3. Cargar datos iniciales
     loadAllUsers();
+
+    // Configurar botón de exportación (debe existir en el HTML)
+    const exportBtn = document.getElementById('exportTopBooksBtn');
+    if (exportBtn) exportBtn.onclick = exportTopBooksToCSV;
 });
 
 function setupAdminTabs() {
@@ -46,7 +46,7 @@ function setupAdminTabs() {
 async function loadAllUsers() {
     const tbody = document.getElementById('usersListBody');
     try {
-        const response = await fetch('/api/profiles/all'); // Nuevo endpoint
+        const response = await fetch('/api/profiles/all');
         if (!response.ok) throw new Error('Error al cargar usuarios');
         const users = await response.json();
 
@@ -67,13 +67,15 @@ async function loadAllUsers() {
                 </td>
             </tr>
         `).join('');
-    } catch (error) { tbody.innerHTML = `<tr><td colspan="4" style="color:var(--error);">${error.message}</td></tr>`; }
+    } catch (error) {
+        tbody.innerHTML = `<tr><td colspan="4" style="color:var(--error);">${error.message}</td></tr>`;
+    }
 }
 
 async function loadAllReviews() {
     const container = document.getElementById('globalReviewsList');
     try {
-        const response = await fetch('/api/reviews/latest?limit=50'); // Reutilizamos este o creamos uno "all"
+        const response = await fetch('/api/reviews/latest?limit=50');
         const reviews = await response.json();
 
         container.innerHTML = reviews.map(r => `
@@ -88,21 +90,24 @@ async function loadAllReviews() {
                 </button>
             </div>
         `).join('');
-    } catch (e) { container.innerHTML = `<p style="color:var(--error);">Error al cargar reseñas.</p>`; }
+    } catch (e) {
+        container.innerHTML = `<p style="color:var(--error);">Error al cargar reseñas.</p>`;
+    }
 }
 
-// ─── LÓGICA DE BORRADO (CORREGIDA Y FUNCIONAL) ──────────────────────────
+// ─── LÓGICA DE BORRADO (con mensajes bonitos) ─────────────────────────────
 
 const confirmInput = document.getElementById('confirmDeleteInput');
 const finalDeleteBtn = document.getElementById('finalDeleteBtn');
 const deleteModal = document.getElementById('deleteModal');
 
 function openDeleteModal(type, id, itemName) {
+    console.log("Abriendo modal con ID:", id);
     deleteTarget = type;
     deleteId = id;
 
     const modalText = document.getElementById('deleteModalText');
-    const confirmInputArea = confirmInput.parentElement; // El contenedor del input
+    const confirmInputArea = confirmInput.parentElement;
 
     if (type === 'user') {
         modalText.innerHTML = `Estás a punto de eliminar definitivamente al usuario <strong>${itemName}</strong>. Esto borrará también sus reseñas y favoritos.`;
@@ -124,7 +129,6 @@ function closeDeleteModal() {
     deleteId = null;
 }
 
-// Validación de la palabra BORRAR
 confirmInput.addEventListener('input', (e) => {
     if (deleteTarget === 'user') {
         const textoEscrito = e.target.value.trim().toUpperCase();
@@ -132,41 +136,85 @@ confirmInput.addEventListener('input', (e) => {
     }
 });
 
-// ⭐️ ESTO ES LO QUE FALTABA: La ejecución del borrado ⭐️
+function autoHideMessage() {
+    const msgBox = document.getElementById('messageBox');
+    if (msgBox && !msgBox.classList.contains('hidden')) {
+        setTimeout(() => {
+            msgBox.classList.add('hidden');
+        }, 5000);
+    }
+}
+
 finalDeleteBtn.addEventListener('click', async () => {
     const originalContent = finalDeleteBtn.innerHTML;
     finalDeleteBtn.disabled = true;
-    finalDeleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Ejecutando...';
+    finalDeleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Eliminando...';
 
     try {
-        const url = deleteTarget === 'user'
-            ? `/api/profiles/${deleteId}`
-            : `/api/reviews/${deleteId}`;
-
-        const response = await fetch(url, { method: 'DELETE' });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || errorData.error || 'Error al eliminar');
+        if (deleteTarget === 'user') {
+            const { data, error } = await supabaseClient.rpc('admin_delete_user_cascade', { target_user_id: deleteId });
+            if (error) throw new Error(error.message);
+            if (!data.success) throw new Error(data.error || 'Error al eliminar usuario');
+            showMessage(data.message, false);
+        } else {
+            const response = await fetch(`/api/reviews/${deleteId}`, { method: 'DELETE' });
+            if (!response.ok) throw new Error('Error al eliminar reseña');
+            showMessage('Reseña eliminada correctamente', false);
         }
 
-
-                closeDeleteModal(); // Cerramos el modal
-
-                // Refrescamos la lista que corresponda automáticamente
-                if (deleteTarget === 'user') {
-                    await loadAllUsers();
-                } else {
-                    await loadAllReviews();
-                }
-
-
-                console.log("Eliminado con éxito");
-
+        closeDeleteModal();
+        if (deleteTarget === 'user') {
+            await loadAllUsers();
+        } else {
+            await loadAllReviews();
+        }
+        autoHideMessage();
     } catch (error) {
-        alert("Error: " + error.message);
+        console.error(error);
+        showMessage(error.message, true);
+        autoHideMessage();
     } finally {
         finalDeleteBtn.disabled = false;
         finalDeleteBtn.innerHTML = originalContent;
     }
 });
+
+// ─── EXPORTAR INFORME: LIBROS CON MÁS RESEÑAS (CSV) ───────────────────────
+
+async function exportTopBooksToCSV() {
+    try {
+        showMessage("Generando informe... por favor espera", false);
+        const { data, error } = await supabaseClient.rpc('get_top_books_by_reviews', { limit_count: 500 });
+        if (error) throw new Error(error.message);
+        if (!data || data.length === 0) throw new Error("No hay datos para exportar");
+
+        // Convertir a CSV
+        const headers = ["book_id", "title", "author", "review_count", "avg_rating"];
+        const rows = data.map(book => [
+            book.book_id,
+            `"${(book.title || "").replace(/"/g, '""')}"`,
+            `"${(book.author || "").replace(/"/g, '""')}"`,
+            book.review_count,
+            book.avg_rating ?? 0
+        ]);
+        const csvContent = [headers.join(","), ...rows.map(row => row.join(","))].join("\n");
+
+        // Descargar archivo
+        const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.href = url;
+        link.setAttribute("download", "top_libros_mas_resenados.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        showMessage(`Informe exportado correctamente (${data.length} libros)`, false);
+        autoHideMessage();
+    } catch (error) {
+        console.error(error);
+        showMessage("Error al exportar: " + error.message, true);
+        autoHideMessage();
+    }
+}

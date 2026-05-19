@@ -1,7 +1,6 @@
-// js/profile.js
-
 let currentProfileId = null;
-let cropper = null; // Variable global para la instancia del recortador
+let cropper = null;
+let currentProfileData = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     const loadingSection = document.getElementById('profileLoading');
@@ -15,10 +14,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    let username = session.user.user_metadata?.username; // Intentamos lo rápido
+    let username = session.user.user_metadata?.username;
 
     if (!username) {
-        // Si falla, le preguntamos a la base de datos usando el ID seguro de la sesión
         const { data: profile } = await supabaseClient
             .from('profiles')
             .select('username')
@@ -30,9 +28,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Y aquí ya iría tu comprobación de error que muestra la pantalla negra
     if (!username) {
-        // Mostrar pantalla de error "No se pudo obtener..."
+        return;
     }
 
     // 2. Obtener datos del backend
@@ -45,13 +42,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const profileData = await response.json();
+        currentProfileData = profileData;
 
-        // 3. Pintar los datos
         renderProfileInfo(profileData);
         renderFavorites(profileData.favorites);
         renderReviews(profileData.reviews);
 
-        // 4. Activar el botón de editar (solo si es mi propio perfil)
         showEditButton(profileData.id);
 
         loadingSection.classList.add('hidden');
@@ -63,24 +59,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
+// ─── VALIDACIÓN TELÉFONO ───────────────────────────────────────────────────
+
+function isValidPhone(phone) {
+    if (!phone) return true;
+
+    const clean = phone.replace(/\s+/g, '');
+
+    if (!/^\d+$/.test(clean)) return false;
+
+    if (clean.length < 9 || clean.length > 15) return false;
+
+    return true;
+}
+
 // ─── LÓGICA DE AJUSTE DE FOTO (Cropper.js) ───────────────────────────────────
 
-// Escuchamos cuando el usuario selecciona un archivo
-// Escuchamos cuando el usuario selecciona un archivo
 document.getElementById('editAvatarFile').addEventListener('change', function(e) {
     const file = e.target.files[0];
     const imageElement = document.getElementById('imageToCrop');
     const wrapper = document.getElementById('cropperWrapper');
-    const fileNameDisplay = document.getElementById('fileNameDisplay'); // Nuevo
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
 
-    // Limpiar instancia previa si existe
     if (cropper) {
         cropper.destroy();
         cropper = null;
     }
 
     if (file) {
-        // Validar que sea una imagen
         if (!file.type.startsWith('image/')) {
             showProfileToast("Por favor, selecciona un archivo de imagen válido.", true);
             this.value = '';
@@ -88,7 +94,6 @@ document.getElementById('editAvatarFile').addEventListener('change', function(e)
             return;
         }
 
-        // Mostrar el nombre del archivo en el botón
         fileNameDisplay.textContent = file.name;
 
         const reader = new FileReader();
@@ -123,7 +128,6 @@ document.getElementById('editAvatarFile').addEventListener('change', function(e)
 // ─── Eventos del Modal de Edición y Guardado ───────────────────────────────
 
 document.getElementById('closeModal').addEventListener('click', () => {
-    // Cerrar modal y limpiar editor
     document.getElementById('editProfileModal').classList.add('hidden');
     document.getElementById('cropperWrapper').classList.add('hidden');
     document.getElementById('editAvatarFile').value = '';
@@ -139,13 +143,22 @@ document.getElementById('editProfileForm').addEventListener('submit', async (e) 
     saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando cambios...';
 
     const username = document.getElementById('editUsername').value;
-    let avatarUrlToSave = document.getElementById('profileAvatar').src; // Mantenemos la actual por defecto
+    let avatarUrlToSave = document.getElementById('profileAvatar').src;
+
+    const movilValue = document.getElementById('editMovil').value.trim();
+    const showMovilValue = document.getElementById('editShowMovil').checked;
 
     try {
-        // A. LÓGICA DE SUBIDA (Solo si hay un cropper activo y una imagen recortada)
+        if (!isValidPhone(movilValue)) {
+            throw new Error("El teléfono no es válido. Solo números y entre 9 y 15 dígitos.");
+        }
+
+        if (showMovilValue && movilValue.length === 0) {
+            throw new Error("No puedes marcar el teléfono como público si no has escrito ninguno.");
+        }
+
+        // A. SUBIDA DE AVATAR
         if (cropper) {
-            // 1. Obtener la imagen recortada del cropper (como un Canvas HTML)
-            // Especificamos el tamaño final deseado (ej: 300x300) para ahorrar espacio
             const canvas = cropper.getCroppedCanvas({
                 width: 300,
                 height: 300,
@@ -155,22 +168,17 @@ document.getElementById('editProfileForm').addEventListener('submit', async (e) 
 
             if (!canvas) throw new Error("No se pudo procesar el recorte de la imagen.");
 
-            // 2. Convertir el Canvas a un Blob (archivo binario) para subirlo
-            // Usamos promise para manejar la conversión asíncrona
             const blob = await new Promise(resolve => {
-                // Detectamos el tipo de archivo original, si no, por defecto wepb
                 const fileType = fileInput.files[0]?.type || 'image/webp';
-                canvas.toBlob(resolve, fileType, 0.9); // Calidad alta (0.9)
+                canvas.toBlob(resolve, fileType, 0.9);
             });
 
             if (!blob) throw new Error("Error al generar el archivo de imagen recortado.");
 
-            // Validar peso final (aunque el recorte a 300x300 debería ser muy ligero)
-            if (blob.size > 2097152) { // 2MB
+            if (blob.size > 2097152) {
                 throw new Error("La imagen recortada es demasiado grande. Máx: 2MB.");
             }
 
-            // 3. Generar nombre único y subir a Supabase Storage
             const fileExt = blob.type.split('/').pop();
             const fileName = `${username}-avatar-${Date.now()}.${fileExt}`;
 
@@ -180,7 +188,6 @@ document.getElementById('editProfileForm').addEventListener('submit', async (e) 
 
             if (uploadError) throw new Error("Error al subir la foto a la colmena.");
 
-            // 4. Obtener la URL pública final
             const { data: urlData } = supabaseClient.storage
                 .from('avatars')
                 .getPublicUrl(fileName);
@@ -188,12 +195,14 @@ document.getElementById('editProfileForm').addEventListener('submit', async (e) 
             avatarUrlToSave = urlData.publicUrl;
         }
 
-        // B. PREPARAR DATOS Y ACTUALIZAR EN BACKEND (Spring Boot)
+        // B. DATOS A GUARDAR
         const updatedData = {
             username: username,
             fullName: document.getElementById('editFullName').value.trim(),
             avatarUrl: avatarUrlToSave,
-            bio: document.getElementById('editBio').value.trim()
+            bio: document.getElementById('editBio').value.trim(),
+            movil: movilValue,
+            showMovil: showMovilValue
         };
 
         const response = await fetch(`/api/profiles/${currentProfileId}`, {
@@ -207,7 +216,6 @@ document.getElementById('editProfileForm').addEventListener('submit', async (e) 
             throw new Error(errorText || 'Error al actualizar el perfil en la colmena.');
         }
 
-        // C. ÉXITO
         showProfileToast('¡Perfil actualizado! La colmena se está refrescando...', false);
         setTimeout(() => window.location.reload(), 1500);
 
@@ -218,7 +226,7 @@ document.getElementById('editProfileForm').addEventListener('submit', async (e) 
     }
 });
 
-// ─── Funciones de Renderizado y UI (Resto del código igual) ────────────────
+// ─── Funciones de Renderizado y UI ─────────────────────────────────────────
 
 function showEditButton(profileId) {
     currentProfileId = profileId;
@@ -236,16 +244,15 @@ function showEditButton(profileId) {
 }
 
 function openEditModal() {
-document.getElementById('fileNameDisplay').textContent = 'Seleccionar imagen desde tu dispositivo...';
+    document.getElementById('fileNameDisplay').textContent = 'Seleccionar imagen desde tu dispositivo...';
     const modal = document.getElementById('editProfileModal');
-    // Limpiamos el selector de archivos y el editor previo por seguridad
+
     document.getElementById('editAvatarFile').value = '';
     document.getElementById('cropperWrapper').classList.add('hidden');
     if (cropper) cropper.destroy();
 
     modal.classList.remove('hidden');
 
-    // Rellenar campos con lo que hay ahora en pantalla
     document.getElementById('editUsername').value = document.getElementById('profileUsernameLabel').textContent.replace('@', '');
 
     const fullNameText = document.getElementById('profileFullName').textContent;
@@ -254,6 +261,9 @@ document.getElementById('fileNameDisplay').textContent = 'Seleccionar imagen des
 
     const currentBio = document.getElementById('profileBio').textContent.trim();
     document.getElementById('editBio').value = (currentBio !== 'Sin biografía.') ? currentBio : '';
+
+    document.getElementById('editMovil').value = currentProfileData?.movil || '';
+    document.getElementById('editShowMovil').checked = currentProfileData?.showMovil || false;
 }
 
 function renderProfileInfo(profile) {
@@ -269,6 +279,18 @@ function renderProfileInfo(profile) {
     }
 
     document.getElementById('profileBio').textContent = profile.bio || 'Sin biografía.';
+
+    // Mostrar teléfono solo si está permitido
+    const phoneContainer = document.getElementById('profilePhoneContainer');
+    phoneContainer.innerHTML = "";
+
+    if (profile.showMovil && profile.movil) {
+        phoneContainer.innerHTML = `
+            <p style="margin-top: 0.8rem; color: var(--text); font-size: 0.95rem;">
+                <i class="fas fa-phone"></i> ${profile.movil}
+            </p>
+        `;
+    }
 
     document.getElementById('followersCount').textContent = profile.followersCount || 0;
     document.getElementById('followingCount').textContent = profile.followingCount || 0;
@@ -306,7 +328,9 @@ function renderReviews(reviews) {
     }
     reviews.forEach(review => {
         const book = review.book;
-        const starsHtml = Array.from({ length: 5 }, (_, i) => { return `<i class="fas fa-star" style="color: ${i < review.rating ? 'var(--honey)' : 'rgba(255,255,255,0.1)'};"></i>`; }).join('');
+        const starsHtml = Array.from({ length: 5 }, (_, i) => {
+            return `<i class="fas fa-star" style="color: ${i < review.rating ? 'var(--honey)' : 'rgba(255,255,255,0.1)'};"></i>`;
+        }).join('');
         const date = new Date(review.createdAt).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
         const reviewEl = document.createElement('div');
         reviewEl.className = 'review-section';
@@ -350,7 +374,9 @@ function showProfileToast(text, isError) {
     }
     const toast = document.createElement('div');
     toast.className = `toast ${isError ? 'error' : 'success'}`;
-    const icon = isError ? '<i class="fas fa-exclamation-circle" style="color: var(--error); font-size: 1.2rem;"></i>' : '<i class="fas fa-check-circle" style="color: var(--success); font-size: 1.2rem;"></i>';
+    const icon = isError
+        ? '<i class="fas fa-exclamation-circle" style="color: var(--error); font-size: 1.2rem;"></i>'
+        : '<i class="fas fa-check-circle" style="color: var(--success); font-size: 1.2rem;"></i>';
     toast.innerHTML = `${icon} <span>${text}</span>`;
     container.appendChild(toast);
     setTimeout(() => { if (toast.parentNode) toast.remove(); }, 4000);

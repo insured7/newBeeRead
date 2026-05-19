@@ -43,6 +43,9 @@ public class Profile {
     @Column(name = "movil")
     private String movil;
 
+    @Column(name="show_movil")
+    private Boolean showMovil = false;
+
     @Column(name = "role_id")
     private Integer roleId = 1; // Por defecto 1 (USER)
 

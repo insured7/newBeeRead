@@ -9,17 +9,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,400&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="icon" href="data:,"> <!-- Favicon error-->
+    <link rel="icon" href="data:,">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-<!-- Fondo hexagonal -->
 <div class="hex-bg" aria-hidden="true">
     <div class="hex-grid"></div>
 </div>
 
-<!-- Abejas decorativas -->
 <div class="bee-trail" aria-hidden="true">
     <span class="bee bee-1">🐝</span>
     <span class="bee bee-2">🐝</span>
@@ -29,7 +27,6 @@
 
 <main class="auth-wrapper">
 
-    <!-- Panel izquierdo: branding -->
     <div class="auth-branding">
         <a href="index.html" class="logo logo--big">
             <i class="fas fa-book-reader"></i> BeeRead
@@ -47,7 +44,6 @@
         </div>
     </div>
 
-    <!-- Panel derecho: formulario -->
     <div class="auth-panel">
         <div class="auth-container">
 
@@ -77,6 +73,11 @@
                         Entrar <i class="fas fa-arrow-right"></i>
                     </button>
                 </form>
+
+                <!-- Enlace para olvidé mi contraseña -->
+                <div style="text-align: right; margin-top: 0.75rem;">
+                    <a href="#" id="forgotPasswordLink" style="color: var(--honey); font-size: 0.85rem;">¿Olvidaste tu contraseña?</a>
+                </div>
 
                 <div class="auth-switch">
                     ¿Todavía no tienes cuenta?

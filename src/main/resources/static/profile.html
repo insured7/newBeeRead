@@ -34,6 +34,9 @@
                     <h1 class="results-title" id="profileFullName" style="margin-bottom: 0.5rem; font-size: 2.2rem;"></h1>
                     <p id="profileBio" style="color: var(--text-muted); font-size: 1rem; max-width: 600px; line-height: 1.6;"></p>
 
+                    <!-- ✅ Aquí se insertará dinámicamente el teléfono si es público -->
+                    <div id="profilePhoneContainer"></div>
+
                     <div class="profile-stats" style="display: flex; gap: 2rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.08);">
                         <div class="stat-item">
                             <span id="followersCount" style="font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 700; color: var(--text);">0</span>
@@ -45,8 +48,6 @@
                         </div>
                     </div>
                 </div>
-
-
             </section>
 
             <div style="margin-bottom: 4rem;">
@@ -79,6 +80,23 @@
                 <input type="text" id="editFullName" class="form-input">
             </div>
 
+            <!-- ✅ NUEVO CAMPO TELÉFONO -->
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label class="form-label">Teléfono</label>
+                <input type="text" id="editMovil" class="form-input" placeholder="Ej: 612345678">
+                <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.4rem;">
+                    Solo números. Entre 9 y 15 dígitos.
+                </div>
+            </div>
+
+            <!-- ✅ CHECKBOX PARA HACERLO PÚBLICO -->
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; color: var(--text-muted); font-size: 0.95rem;">
+                    <input type="checkbox" id="editShowMovil" style="transform: scale(1.2);">
+                    Mostrar teléfono públicamente en mi perfil
+                </label>
+            </div>
+
             <div class="form-group" style="margin-bottom: 1.5rem;">
                 <label class="form-label">Foto de Perfil</label>
 
@@ -98,7 +116,6 @@
                 <label class="form-label">Biografía</label>
                 <textarea id="editBio" class="form-input" style="height: 80px; resize: none;"></textarea>
             </div>
-
 
             <button type="submit" class="btn-primary" style="width: 100%;">
                 <i class="fas fa-save"></i> Guardar Cambios

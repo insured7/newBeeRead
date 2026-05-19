@@ -33,6 +33,15 @@
     <div class="results-inner">
         <h1 class="results-title" style="margin-bottom: 2rem;"><i class="fas fa-shield-alt" style="color: var(--honey);"></i> Panel de Control (Admin)</h1>
 
+        <!-- ✅ CONTENEDOR DE MENSAJES (estilo BeeRead) -->
+        <div id="messageBox" class="hidden" style="margin-bottom: 1.5rem;"></div>
+
+        <div style="margin-bottom: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+            <button id="exportTopBooksBtn" class="btn-primary" style="background: var(--honey); color: var(--navy-deep); border: none;">
+                <i class="fas fa-download"></i> Exportar libros más reseñados (CSV)
+            </button>
+        </div>
+
         <div class="search-tabs-container">
             <button id="tabUsers" class="search-tab active"><i class="fas fa-users"></i> Usuarios de la Colmena</button>
             <button id="tabReviews" class="search-tab"><i class="fas fa-comments"></i> Moderación de Reseñas</button>
